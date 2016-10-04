@@ -39,16 +39,24 @@ class Ammo(ViewColumn):
             text = col.getText(stuff)
             del col
             return text
-        if getattr(stuff, "charge", None) is not None:
-            charges = stuff.numCharges
-            if charges > 0:
-                cycles = stuff.numShots
-                if cycles !=0 and charges != cycles:
-                    return "%s (%d, %d cycles)" % (stuff.charge.name, charges, cycles)
+
+        try:
+            if len(stuff.getValidCharges()) > 0:
+                if stuff.charge is not None:
+                    charges = stuff.numCharges
+                    if charges > 0:
+                        cycles = stuff.numShots
+                        if cycles !=0 and charges != cycles:
+                            return "%s (%d, %d cycles)" % (stuff.charge.name, charges, cycles)
+                        else:
+                            return "%s (%d)" % (stuff.charge.name, charges)
+                    else:
+                        return stuff.charge.name
                 else:
-                    return "%s (%d)" % (stuff.charge.name, charges)
-            else:
-                return stuff.charge.name
+                    return "[No Charge Loaded]"
+        except AttributeError:
+            pass
+
         return ""
 
     def getImageId(self, mod):
